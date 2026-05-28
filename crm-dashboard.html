@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a14;
+    --surface: #12121f;
+    --surface2: #1a1a2e;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0eeff;
+    --muted: #8884a8;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(99,60,200,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 35% at 80% 80%, rgba(29,158,117,0.12) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .shell { position: relative; z-index: 1; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 68px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,20,0.8);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-mark {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #7B5CF0, #0F6E56);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    color: #fff;
+  }
+
+  .logo span { color: #7B5CF0; }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7B5CF0, #5EA8E4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    border: 2px solid rgba(123,92,240,0.4);
+  }
+
+  .badge {
+    background: rgba(123,92,240,0.15);
+    border: 1px solid rgba(123,92,240,0.3);
+    color: #A990F7;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 3.5rem 2.5rem 1rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, #7B5CF0, #1D9E75);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  /* ── STATS STRIP ── */
+  .stats-strip {
+    max-width: 1280px;
+    margin: 2rem auto 0;
+    padding: 0 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .stat {
+    background: var(--surface);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: background 0.2s;
+  }
+
+  .stat:hover { background: var(--surface2); }
+
+  .stat-label { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 700; }
+  .stat-delta { font-size: 12px; color: #1D9E75; }
+
+  /* ── SECTION HEADER ── */
+  .section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2.5rem 2.5rem 0;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 4px; height: 18px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #7B5CF0, #1D9E75);
+  }
+
+  .section-count {
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── APP GRID ── */
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .app-card {
+    background: var(--surface);
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s, transform 0.15s;
+    cursor: pointer;
+  }
+
+  .app-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--card-glow);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .app-card:hover { background: var(--surface2); }
+  .app-card:hover::after { opacity: 1; }
+  .app-card:active { transform: scale(0.98); }
+
+  .app-icon-wrap {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--icon-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    color: var(--icon-color);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .app-icon-wrap .ti { line-height: 1; }
+
+  .app-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+
+  .app-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .app-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .app-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    font-weight: 500;
+  }
+
+  .app-arrow {
+    color: var(--muted);
+    font-size: 16px;
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .app-card:hover .app-arrow {
+    transform: translate(3px, -3px);
+    color: var(--icon-color);
+  }
+
+  /* ── ADMIN PANEL ROW ── */
+  .admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .admin-card {
+    background: var(--surface);
+    padding: 1.75rem 2rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: background 0.25s;
+    cursor: pointer;
+  }
+
+  .admin-card:hover { background: var(--surface2); }
+
+  .admin-icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    background: var(--icon-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    color: var(--icon-color);
+    flex-shrink: 0;
+  }
+
+  .admin-info { flex: 1; }
+  .admin-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .admin-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .admin-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* ── LINK MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #16162a;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 440px;
+    max-width: 90vw;
+    animation: pop 0.2s ease;
+  }
+
+  @keyframes pop { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .modal-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .modal-subtitle { font-size: 13px; color: var(--muted); }
+
+  .modal label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .modal input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal input:focus { border-color: rgba(123,92,240,0.6); }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 9px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { background: var(--surface2); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #7B5CF0, #5EA8E4);
+    color: #fff;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+
+  /* ── FOOTER ── */
+  .footer {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem 2.5rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 0 1rem; }
+    .hero, .stats-strip, .section { padding-left: 1rem; padding-right: 1rem; }
+    .stats-strip { grid-template-columns: repeat(2, 1fr); }
+    .admin-grid { grid-template-columns: 1fr; }
+    .footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark"><i class="ti ti-building-estate" aria-hidden="true"></i></div>
+      Software<span>CRM</span>
+    </div>
+    <div class="topbar-right">
+      <span class="badge"><i class="ti ti-circle-filled" style="font-size:8px; vertical-align:1px; margin-right:4px; color:#1D9E75;" aria-hidden="true"></i>All Systems Live</span>
+      <div class="avatar" title="Admin User">AD</div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">Welcome back, Admin</p>
+    <h1>Your <em>Business Hub</em><br>at a Glance</h1>
+    <p>Manage every department from one place — HR, Finance, Procurement, Vendors, and more.</p>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-strip" style="max-width:1280px; margin: 2rem auto 0; padding: 0 2.5rem;">
+    <div style="max-width:1280px; margin:0; display:contents;">
+  </div>
+  </div>
+
+  <div style="max-width:1280px; margin:2rem auto 0; padding: 0 2.5rem;">
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:14px; overflow:hidden;">
+      <div class="stat"><span class="stat-label">Total Modules</span><span class="stat-value">8</span><span class="stat-delta">↑ All Active</span></div>
+      <div class="stat"><span class="stat-label">Active Users</span><span class="stat-value">142</span><span class="stat-delta">↑ +12 this week</span></div>
+      <div class="stat"><span class="stat-label">Pending Tasks</span><span class="stat-value">34</span><span class="stat-delta" style="color:#EF9F27;">⚡ Needs attention</span></div>
+      <div class="stat"><span class="stat-label">System Health</span><span class="stat-value">99%</span><span class="stat-delta">↑ Excellent</span></div>
+    </div>
+  </div>
+
+  <!-- CORE APPS -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Core Applications</h2>
+      <span class="section-count">8 modules</span>
+    </div>
+
+    <div class="app-grid" id="appGrid">
+      <!-- Filled by JS -->
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section class="section" style="margin-top:2rem;">
+    <div class="section-header">
+      <h2 class="section-title">Administration</h2>
+      <span class="section-count">2 panels</span>
+    </div>
+
+    <div class="admin-grid" id="adminGrid">
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span>© 2026 Software CRM · All rights reserved</span>
+    <span>v2.1.0 · Last updated today</span>
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-icon" id="modalIcon"></div>
+      <div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-subtitle" id="modalSubtitle"></div>
+      </div>
+    </div>
+    <label>Application URL</label>
+    <input type="url" id="modalInput" placeholder="https://your-app.company.com" />
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAndOpen()">Save & Open →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const APPS = [
+  {
+    id: 'attendance',
+    name: 'Attendance',
+    desc: 'Track employee check-ins, leaves, and working hours in real time.',
+    icon: 'ti-calendar-check',
+    iconBg: 'rgba(83,74,183,0.18)',
+    iconColor: '#A990F7',
+    glow: 'linear-gradient(135deg, rgba(83,74,183,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(83,74,183,0.15)',
+    tagColor: '#A990F7',
+    tag: 'HR Suite',
+  },
+  {
+    id: 'ims',
+    name: 'IMS',
+    desc: 'Inventory Management System — stock levels, warehousing, and supply tracking.',
+    icon: 'ti-package',
+    iconBg: 'rgba(29,158,117,0.18)',
+    iconColor: '#5DCAA5',
+    glow: 'linear-gradient(135deg, rgba(29,158,117,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(29,158,117,0.15)',
+    tagColor: '#5DCAA5',
+    tag: 'Operations',
+  },
+  {
+    id: 'mrf',
+    name: 'MRF',
+    desc: 'Material Requisition Form — raise and approve internal material requests.',
+    icon: 'ti-file-text',
+    iconBg: 'rgba(186,117,23,0.18)',
+    iconColor: '#FAC775',
+    glow: 'linear-gradient(135deg, rgba(186,117,23,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(186,117,23,0.15)',
+    tagColor: '#FAC775',
+    tag: 'Procurement',
+  },
+  {
+    id: 'hrms',
+    name: 'HRMS',
+    desc: 'Human Resource Management — payroll, onboarding, and employee records.',
+    icon: 'ti-users',
+    iconBg: 'rgba(212,83,126,0.18)',
+    iconColor: '#ED93B1',
+    glow: 'linear-gradient(135deg, rgba(212,83,126,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(212,83,126,0.15)',
+    tagColor: '#ED93B1',
+    tag: 'HR Suite',
+  },
+  {
+    id: 'expense',
+    name: 'Expense Management',
+    desc: 'Submit, review, and reimburse employee expenses with approval workflows.',
+    icon: 'ti-receipt',
+    iconBg: 'rgba(55,138,221,0.18)',
+    iconColor: '#85B7EB',
+    glow: 'linear-gradient(135deg, rgba(55,138,221,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(55,138,221,0.15)',
+    tagColor: '#85B7EB',
+    tag: 'Finance',
+  },
+  {
+    id: 'vendor',
+    name: 'Vendor Management',
+    desc: 'Manage supplier contracts, performance ratings, and vendor onboarding.',
+    icon: 'ti-truck',
+    iconBg: 'rgba(99,153,34,0.18)',
+    iconColor: '#97C459',
+    glow: 'linear-gradient(135deg, rgba(99,153,34,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(99,153,34,0.15)',
+    tagColor: '#97C459',
+    tag: 'Supply Chain',
+  },
+  {
+    id: 'payment',
+    name: 'Payment Management',
+    desc: 'Process outgoing payments, track dues, and maintain payment histories.',
+    icon: 'ti-credit-card',
+    iconBg: 'rgba(216,90,48,0.18)',
+    iconColor: '#F0997B',
+    glow: 'linear-gradient(135deg, rgba(216,90,48,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(216,90,48,0.15)',
+    tagColor: '#F0997B',
+    tag: 'Finance',
+  },
+  {
+    id: 'purchase',
+    name: 'Purchase Management',
+    desc: 'Raise POs, manage approvals, and track purchase orders end-to-end.',
+    icon: 'ti-shopping-cart',
+    iconBg: 'rgba(123,92,240,0.18)',
+    iconColor: '#A990F7',
+    glow: 'linear-gradient(135deg, rgba(123,92,240,0.06) 0%, transparent 60%)',
+    tagBg: 'rgba(123,92,240,0.15)',
+    tagColor: '#A990F7',
+    tag: 'Procurement',
+  },
+];
+
+const ADMIN = [
+  {
+    id: 'user-mgmt',
+    name: 'User Management System',
+    desc: 'Manage user accounts, roles, permissions, and access control across all modules.',
+    icon: 'ti-shield-lock',
+    iconBg: 'rgba(83,74,183,0.2)',
+    iconColor: '#A990F7',
+    tagBg: 'rgba(83,74,183,0.15)',
+    tagColor: '#A990F7',
+    tag: 'ADMIN',
+  },
+  {
+    id: 'admin-panel',
+    name: 'Admin Panel',
+    desc: 'System configuration, audit logs, integration settings, and global preferences.',
+    icon: 'ti-settings-cog',
+    iconBg: 'rgba(29,158,117,0.2)',
+    iconColor: '#5DCAA5',
+    tagBg: 'rgba(29,158,117,0.15)',
+    tagColor: '#5DCAA5',
+    tag: 'ADMIN',
+  },
+];
+
+// Load saved URLs
+function getLinks() {
+  try { return JSON.parse(localStorage.getItem('crm_links') || '{}'); } catch { return {}; }
+}
+function saveLink(id, url) {
+  const l = getLinks(); l[id] = url;
+  try { localStorage.setItem('crm_links', JSON.stringify(l)); } catch {}
+}
+
+let currentApp = null;
+
+function openModal(app) {
+  currentApp = app;
+  document.getElementById('modalIcon').style.cssText = `background:${app.iconBg};color:${app.iconColor};width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;`;
+  document.getElementById('modalIcon').innerHTML = `<i class="ti ${app.icon}" aria-hidden="true"></i>`;
+  document.getElementById('modalTitle').textContent = app.name;
+  document.getElementById('modalSubtitle').textContent = 'Enter the URL to open this application';
+  const saved = getLinks()[app.id] || '';
+  document.getElementById('modalInput').value = saved;
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('modalInput').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  currentApp = null;
+}
+
+function saveAndOpen() {
+  const url = document.getElementById('modalInput').value.trim();
+  if (!url) { document.getElementById('modalInput').style.borderColor = '#E24B4A'; return; }
+  if (currentApp) saveLink(currentApp.id, url);
+  closeModal();
+  window.open(url, '_blank');
+}
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+document.getElementById('modalInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') saveAndOpen();
+  if (e.key === 'Escape') closeModal();
+});
+
+// Render app cards
+const grid = document.getElementById('appGrid');
+APPS.forEach((app, i) => {
+  const saved = getLinks()[app.id];
+  const card = document.createElement('div');
+  card.className = 'app-card';
+  card.style.cssText = `--icon-bg:${app.iconBg};--icon-color:${app.iconColor};--card-glow:${app.glow};--tag-bg:${app.tagBg};--tag-color:${app.tagColor}; animation: fadeUp 0.4s ease ${i * 0.05}s both;`;
+  card.innerHTML = `
+    <div class="app-icon-wrap"><i class="ti ${app.icon}" aria-hidden="true"></i></div>
+    <div>
+      <div class="app-name">${app.name}</div>
+      <div class="app-desc">${app.desc}</div>
+    </div>
+    <div class="app-footer">
+      <span class="app-tag">${app.tag}</span>
+      <i class="ti ti-arrow-up-right app-arrow" aria-hidden="true"></i>
+    </div>`;
+  card.addEventListener('click', () => {
+    const url = getLinks()[app.id];
+    if (url) window.open(url, '_blank');
+    else openModal(app);
+  });
+  card.addEventListener('contextmenu', (e) => { e.preventDefault(); openModal(app); });
+  card.title = saved ? `Open ${app.name} (Right-click to change URL)` : `Set URL for ${app.name}`;
+  grid.appendChild(card);
+});
+
+// Render admin cards
+const adminGrid = document.getElementById('adminGrid');
+ADMIN.forEach((app, i) => {
+  const card = document.createElement('div');
+  card.className = 'admin-card';
+  card.style.cssText = `--icon-bg:${app.iconBg};--icon-color:${app.iconColor};--tag-bg:${app.tagBg};--tag-color:${app.tagColor};`;
+  card.innerHTML = `
+    <div class="admin-icon"><i class="ti ${app.icon}" style="color:${app.iconColor};font-size:28px;" aria-hidden="true"></i></div>
+    <div class="admin-info">
+      <div class="admin-name">${app.name}</div>
+      <div class="admin-desc">${app.desc}</div>
+    </div>
+    <span class="admin-badge" style="background:${app.tagBg};color:${app.tagColor};">${app.tag}</span>`;
+  card.addEventListener('click', () => {
+    const url = getLinks()[app.id];
+    if (url) window.open(url, '_blank');
+    else openModal(app);
+  });
+  card.addEventListener('contextmenu', (e) => { e.preventDefault(); openModal(app); });
+  adminGrid.appendChild(card);
+});
+
+// Fade up animation
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeUp { from { opacity:0; transform:translateY(16px);} to { opacity:1; transform:translateY(0);} }`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
